@@ -33,3 +33,9 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+#specific
+/bottle.py
+/libcloud
+/swagger
+/vendors/*
