@@ -1,11 +1,11 @@
-lxc_api
+lxc-restapi
 =======
 
-Restful Api for lxc
+Restful Api for lxc based on lxc's python api
 
 State: Alpha
 * basic operations works
-* no security !!!
+* no security !!! please be careful
 
 Needs:
 * python3
@@ -14,7 +14,7 @@ Needs:
 Quick start:
 
 	./install_local.sh #will download vendor libraries
-	sudo ./lxc_api.py #Yes as root, lxc is serious stuff :)
+	sudo ./lxc-restapi.py #Yes as root, lxc is serious stuff :)
 
 In another shell:
 
