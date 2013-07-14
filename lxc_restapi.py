@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 
-import json
-import bottle
-import glob
-import lxc
-import os
 import subprocess
-import sys
 import shlex
+
 from bottle import route, run, request, abort, static_file
+
+import lxc
 
 # Conf
 # available actions by state
@@ -23,7 +20,7 @@ ACTIONS_BY_STATE = {"STOPPED": ['start', 'destroy'],
 
 LXC_MIN_VERSION = "0.9.0"
 
-DEFAULT_TEMPLATE="ubuntu"
+DEFAULT_TEMPLATE = "ubuntu"
 
 def is_good_lxc_version(version):
     #Check LXC version
@@ -422,13 +419,15 @@ DOC_API_CONTAINER_ACTIONS['operations'].append({
                 "dataType": "string",
                 "description": "for chrootcmd and attach, the command to execute",
                 "paramType": "body",
-                "required": True
+                "required": False
                 }
                 ],
             "summary":"perform {action} on a container",
             "notes": "",
             "errorResponses":[]
                       })
+
+
 @route(PREFIX + '/containers/:name/actions/start', method='POST')
 #start it
 def start_container(name):
@@ -445,6 +444,7 @@ def shutdown_container(name):
     if not container.shutdown(timeout=10):
         abort(500, 'container.shutdown() failed')
 
+
 @route(PREFIX + '/containers/:name/actions/stop', method='POST')
 #shut it down
 def stop_container(name):
@@ -452,6 +452,7 @@ def stop_container(name):
     if not container.stop():
         abort(500, 'container.shutdown() failed')
     container.wait("STOPPED", 10)
+
 
 @route(PREFIX + '/containers/:name/actions/restart', method='POST')
 #restart it
@@ -469,6 +470,7 @@ def freeze_container(name):
         abort(500, 'container.freeze() failed')
     container.wait("FROZEN", 10)
 
+
 @route(PREFIX + '/containers/:name/actions/unfreeze', method='POST')
 #unfreeze it
 def unfreeze_container(name):
@@ -477,12 +479,14 @@ def unfreeze_container(name):
         abort(500, 'container.unfreeze() failed')
     container.wait("RUNNING", 10)
 
+
 @route(PREFIX + '/containers/:name/actions/destroy', method='POST')
 #unfreeze it
 def destroy_container(name):
     container = get_container_object(name)
     if not container.destroy():
         abort(500, 'container.destroy() failed')
+
     
 @route(PREFIX + '/containers/:name/actions/chrootcmd', method='POST')
 def chrootcmd(name):
