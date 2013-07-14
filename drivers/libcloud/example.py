@@ -1,15 +1,21 @@
 #!/usr/bin/env python
 
 import time
+import sys
 
 """ Load driver """
-from lxc_api import LxcApiNodeDriver
+from lxc_restapi_driver import LxcRestapiNodeDriver
 
 #uncomment to enable http debug logging
 #from libcloud.common.base import LoggingConnection
 #LoggingConnection.log = open("/dev/stderr", "w")
 
-driver = LxcApiNodeDriver()
+if len(sys.argv) > 1:
+    url = sys.argv[1]
+else:
+    url = "http://localhost:8080"
+
+driver = LxcRestapiNodeDriver(url=url)
 container_name = "demolibcloud"
 
 for node in driver.list_nodes():

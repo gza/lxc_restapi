@@ -21,6 +21,8 @@ In another shell:
 Test libcloud driver:
 
     PYTHONPATH="." drivers/libcloud/example.py
+    or
+    PYTHONPATH="." drivers/libcloud/example.py http://myserver:8081
 
 Run tests:
 
