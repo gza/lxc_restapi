@@ -2,6 +2,7 @@
 
 import subprocess
 import shlex
+import argparse
 
 from bottle import route, run, request, abort, static_file
 
@@ -598,10 +599,23 @@ def swagger_ui():
 def index():
     return static_file('swagger.html', root='.')
 
-
-if  __name__ == "__main__":
-    #Run
+def main():
     if not is_good_lxc_version(LXC_MIN_VERSION):
         raise Exception('Please Use LXC > %s' % LXC_MIN_VERSION)
-    run(host='0.0.0.0', port=8080, debug=True)
+    parser = argparse.ArgumentParser(description='Lxc Restful Webservice.')
+    parser.add_argument('--ip', 
+                        nargs='?',
+                        help='Ip address to listen on (default: 127.0.0.1)',
+                        default="127.0.0.1")
+    parser.add_argument('--port',
+                        nargs='?',
+                        help='tcp port to listen on (default: 8080)',
+                        default="8080")
+    
+    args = parser.parse_args()
+    run(host=args.ip, port=args.port, debug=True)
+
+                    
+if  __name__ == "__main__":
+    main()
     

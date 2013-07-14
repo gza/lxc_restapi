@@ -21,8 +21,6 @@ In another shell:
 Test libcloud driver:
 
     PYTHONPATH="." drivers/libcloud/example.py
-    or
-    PYTHONPATH="." drivers/libcloud/example.py http://myserver:8081
 
 Run tests:
 
@@ -30,4 +28,10 @@ Run tests:
 
 explore/test with swagger:
 
-Use your browser: http://yourserver:8080/info
+Use your browser: http://localhost:8080/info
+
+Tips: 
+
+localhost:8080 is default for minimal security
+
+see scripts with "--help" to tune ip and port
