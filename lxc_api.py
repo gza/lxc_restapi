@@ -592,7 +592,7 @@ def swagger_ui():
 
 @route('/info', method='GET')
 def index():
-    return static_file('index.html', root='swagger')
+    return static_file('swagger.html', root='.')
 
 
 if  __name__ == "__main__":
