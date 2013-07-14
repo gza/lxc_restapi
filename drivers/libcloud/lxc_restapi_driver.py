@@ -55,7 +55,7 @@ class LxcRestapiNodeDriver(NodeDriver):
     connectionCls =  LxcRestapiConnection
     name = "LxcRestapi Node Provider"
     website = 'https://github.com/gza/lxc_restapi'
-    type = Provider.LXCRESTAPI
+    type = "LXCAPI"
 
     #@todo: figure out what thawed state means
     NODE_STATE_MAP = {
@@ -107,7 +107,7 @@ class LxcRestapiNodeDriver(NodeDriver):
         """
         node.state = NodeState.REBOOTING
         response = self.connection.request(action="/v1/containers/%s/actions/reboot" % node.name, method="POST")
-        node.state = NodeState.RUNNNING
+        node.state = NodeState.RUNNING
         
         return response.success()
 
@@ -130,7 +130,8 @@ class LxcRestapiNodeDriver(NodeDriver):
         @inherits: L{NodeDriver.list_images}
         """
         return [
-            NodeImage(id=1, name="ubuntu", driver=self)
+                NodeImage(id="ubuntu.lucid", name="ubuntu.lucid", driver=self),
+                NodeImage(id="ubuntu.precise", name="ubuntu.precise", driver=self)
         ]
 
     def list_sizes(self, location=None):
@@ -166,12 +167,21 @@ class LxcRestapiNodeDriver(NodeDriver):
 
         @inherits: L{NodeDriver.create_node}
         """
+        image = kwargs['image']
+        if image.name == "ubuntu.lucid":
+            template = {"name":"ubuntu",
+                        "args":[{"key":"release","value":"lucid"}]
+                        }
+        else:
+            #default
+            template = {"name":"ubuntu-hebex", "args":[]}
+       
         name = kwargs['name']
         container = {
                      "cgroups": [],
                      "name": name,
                      "conf": [],
-                     "template": {"name":"ubuntu", "args":[]}
+                     "template": template
                      }
         
         self.connection.request(action="/v1/containers", method="POST", data=json.dumps(container))
