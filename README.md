@@ -1,4 +1,4 @@
-lxc-restapi
+lxc_restapi
 =======
 
 Restful Api for lxc based on lxc's python api
@@ -14,7 +14,7 @@ Needs:
 Quick start:
 
 	./install_local.sh #will download vendor libraries
-	sudo ./lxc-restapi.py #Yes as root, lxc is serious stuff :)
+	sudo ./lxc_restapi.py #Yes as root, lxc is serious stuff :)
 
 In another shell:
 
