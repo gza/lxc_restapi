@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 
-import json
-import bottle
-import glob
-import lxc
-import os
 import subprocess
-import sys
 import shlex
+import argparse
+
 from bottle import route, run, request, abort, static_file
+
+import lxc
 
 # Conf
 # available actions by state
@@ -23,7 +21,7 @@ ACTIONS_BY_STATE = {"STOPPED": ['start', 'destroy'],
 
 LXC_MIN_VERSION = "0.9.0"
 
-DEFAULT_TEMPLATE="ubuntu"
+DEFAULT_TEMPLATE = "ubuntu"
 
 def is_good_lxc_version(version):
     #Check LXC version
@@ -112,12 +110,12 @@ def keyval_list_to_dict(data):
         val = item['val']
         if key in retval:
             #key used twice, assuming it wants an array
-            if isinstance(retval['key'], str):
-                oldval = retval['key']
-                retval['key'] = [oldval]
-            retval['key'].append(val)
+            if isinstance(retval[key], str):
+                oldval = retval[key]
+                retval[key] = [oldval]
+            retval[key].append(val)
         else:
-            retval['key'] = val
+            retval[key] = val
     return retval
 
 
@@ -422,13 +420,15 @@ DOC_API_CONTAINER_ACTIONS['operations'].append({
                 "dataType": "string",
                 "description": "for chrootcmd and attach, the command to execute",
                 "paramType": "body",
-                "required": True
+                "required": False
                 }
                 ],
             "summary":"perform {action} on a container",
             "notes": "",
             "errorResponses":[]
                       })
+
+
 @route(PREFIX + '/containers/:name/actions/start', method='POST')
 #start it
 def start_container(name):
@@ -445,6 +445,7 @@ def shutdown_container(name):
     if not container.shutdown(timeout=10):
         abort(500, 'container.shutdown() failed')
 
+
 @route(PREFIX + '/containers/:name/actions/stop', method='POST')
 #shut it down
 def stop_container(name):
@@ -452,6 +453,7 @@ def stop_container(name):
     if not container.stop():
         abort(500, 'container.shutdown() failed')
     container.wait("STOPPED", 10)
+
 
 @route(PREFIX + '/containers/:name/actions/restart', method='POST')
 #restart it
@@ -469,6 +471,7 @@ def freeze_container(name):
         abort(500, 'container.freeze() failed')
     container.wait("FROZEN", 10)
 
+
 @route(PREFIX + '/containers/:name/actions/unfreeze', method='POST')
 #unfreeze it
 def unfreeze_container(name):
@@ -477,12 +480,14 @@ def unfreeze_container(name):
         abort(500, 'container.unfreeze() failed')
     container.wait("RUNNING", 10)
 
+
 @route(PREFIX + '/containers/:name/actions/destroy', method='POST')
 #unfreeze it
 def destroy_container(name):
     container = get_container_object(name)
     if not container.destroy():
         abort(500, 'container.destroy() failed')
+
     
 @route(PREFIX + '/containers/:name/actions/chrootcmd', method='POST')
 def chrootcmd(name):
@@ -594,10 +599,23 @@ def swagger_ui():
 def index():
     return static_file('swagger.html', root='.')
 
-
-if  __name__ == "__main__":
-    #Run
+def main():
     if not is_good_lxc_version(LXC_MIN_VERSION):
         raise Exception('Please Use LXC > %s' % LXC_MIN_VERSION)
-    run(host='0.0.0.0', port=8080, debug=True)
+    parser = argparse.ArgumentParser(description='Lxc Restful Webservice.')
+    parser.add_argument('--ip', 
+                        nargs='?',
+                        help='Ip address to listen on (default: 127.0.0.1)',
+                        default="127.0.0.1")
+    parser.add_argument('--port',
+                        nargs='?',
+                        help='tcp port to listen on (default: 8080)',
+                        default="8080")
+    
+    args = parser.parse_args()
+    run(host=args.ip, port=args.port, debug=True)
+
+                    
+if  __name__ == "__main__":
+    main()
     
