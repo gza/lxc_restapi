@@ -130,8 +130,16 @@ class LxcRestapiNodeDriver(NodeDriver):
         @inherits: L{NodeDriver.list_images}
         """
         return [
-                NodeImage(id="ubuntu.lucid", name="ubuntu.lucid", driver=self),
-                NodeImage(id="ubuntu.precise", name="ubuntu.precise", driver=self)
+                NodeImage(id="ubuntu.lucid", 
+                          name="ubuntu.lucid", 
+                          extra={"template_name":"ubuntu",
+                                  "template_args":[{"key":"release","val":"lucid"}]},
+                          driver=self),
+                NodeImage(id="ubuntu.precise",
+                          name="ubuntu.precise",
+                          extra={"template_name":"ubuntu",
+                                  "template_args":[{"key":"release","val":"precise"}]},
+                          driver=self)
         ]
 
     def list_sizes(self, location=None):
@@ -167,14 +175,16 @@ class LxcRestapiNodeDriver(NodeDriver):
 
         @inherits: L{NodeDriver.create_node}
         """
-        image = kwargs['image']
-        if image.name == "ubuntu.lucid":
-            template = {"name":"ubuntu",
-                        "args":[{"key":"release","value":"lucid"}]
-                        }
-        else:
-            #default
-            template = {"name":"ubuntu-hebex", "args":[]}
+        default = "ubuntu.precise"
+        template = {"name":"ubuntu", "args":[]}
+        if 'image' not in kwargs:
+            kwargs['image'] = default
+            
+        for image in self.list_images():
+            if image.name ==  kwargs['image']:
+                template = {"name":image.extra["template_name"],
+                            "args":image.extra["template_args"]
+                            }
        
         name = kwargs['name']
         container = {
