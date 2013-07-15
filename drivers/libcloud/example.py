@@ -18,6 +18,7 @@ def main(args):
     container_name = "demolibcloud"
     
     for node in driver.list_nodes():
+        print("listing... node : %s" % node.name)
         if node.name == container_name:
             print("found %s, destroying it " % node.name)
             driver.destroy_node(node)
@@ -32,8 +33,8 @@ def main(args):
     time.sleep(10)
     
     print("Listing nodes")
-    for node in driver.list_nodes():
-        print("%s, %s" % (node.name, node.public_ips))
+    for node_item in driver.list_nodes():
+        print("%s, %s" % (node_item.name, node_item.public_ips))
     
     print("destroying demonstration node")
     driver.destroy_node(node)
