@@ -110,12 +110,12 @@ def keyval_list_to_dict(data):
         val = item['val']
         if key in retval:
             #key used twice, assuming it wants an array
-            if isinstance(retval['key'], str):
-                oldval = retval['key']
-                retval['key'] = [oldval]
-            retval['key'].append(val)
+            if isinstance(retval[key], str):
+                oldval = retval[key]
+                retval[key] = [oldval]
+            retval[key].append(val)
         else:
-            retval['key'] = val
+            retval[key] = val
     return retval
 
 
