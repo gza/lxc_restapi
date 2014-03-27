@@ -240,7 +240,7 @@ def add_container():
         template_name = data['template']['name']
     
     print("will create container with %s, %s" %( template_name, template_args))       
-    if container.create(template_name, template_args):
+    if container.create(template_name, args=template_args):
         if len(conf) > 0:
             set_container_conf(container, conf)
         return get_container(data['name'])
