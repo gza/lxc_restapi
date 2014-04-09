@@ -9,7 +9,7 @@ State: Alpha
 
 Needs:
 * python3
-* lxc 0.9
+* lxc 1.0
  
 Quick start:
 
